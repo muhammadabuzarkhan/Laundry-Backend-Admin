@@ -8,6 +8,7 @@ const http = require("http");
 const credentials = require("./ssl");
 const morgan = require("morgan");
 const swagger = require("./Swagger");
+const subscribeRoutes =require('./Routes/User/subscribeRoutes.js')
 
 require("dotenv").config();
 const { NODE_ENV, PORT } = process.env
@@ -32,6 +33,7 @@ app.use(express.json({ limit: '550mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use('/swagger', swagger.serve, swagger.setup)
 
+
 //limiting the api calls
 const limiter = rateLimit({
     max: 1000000,
@@ -39,6 +41,7 @@ const limiter = rateLimit({
     message: "Too many requests from this IP, please try again in an hour!",
 });
 
+app.use('/api', subscribeRoutes);
 app.use("/api", limiter);
 
 //static routes
@@ -51,6 +54,7 @@ app.get("/", (req, res) => {
     console.log("NODE_ENV",NODE_ENV);
     res.send(`Laundry wash Server is Running on ${NODE_ENV}`);
 });
+
 
 var httpsServer;
 if (NODE_ENV === "development") httpsServer = http.createServer(app)
