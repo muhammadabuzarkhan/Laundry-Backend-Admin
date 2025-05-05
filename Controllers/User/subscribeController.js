@@ -32,3 +32,13 @@ exports.subscribe = async (req, res) => {
     res.status(500).json({ error: 'Something went wrong.' });
   }
 };
+
+exports.getAllSubscribers = async (req, res) => {
+  try {
+    const subscribers = await Subscriber.find().sort({ createdAt: -1 }); // Latest first
+    res.status(200).json(subscribers);
+  } catch (error) {
+    console.error('Error fetching subscribers:', error);
+    res.status(500).json({ error: 'Failed to fetch subscribers.' });
+  }
+};
