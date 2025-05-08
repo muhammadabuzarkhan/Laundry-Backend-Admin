@@ -118,11 +118,6 @@ router.get("/referal/get/:code" , validateToken ,verifyToken , getReferalDetails
 router.delete('/referal/delete/:id' , validateToken ,verifyToken , deleteReferalCode)
 
 
-// ReferalCode api end here
-
-
-
-
 module.exports = router
 
 /**
