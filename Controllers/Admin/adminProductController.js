@@ -5,12 +5,7 @@ const mongoose = require('mongoose')
 exports.createProduct = async (req,res) => {
     const {subCatId,title,price,description,weight } = req.body
     try{
-        // const alreadyPro = await Product.find({title })
-        
-        // if(alreadyPro.length > 0){
-        //     return  res.status(400).json(ApiResponse({}, "Product already exists", false));
-        // }
-        const data = {
+               const data = {
             subCatId,title,price,description,weight
         }
 

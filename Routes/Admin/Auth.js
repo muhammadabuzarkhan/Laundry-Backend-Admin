@@ -14,8 +14,10 @@ const { editProduct ,  createProduct ,getProductsBysubCategoryId , ProductStatus
 const { newProductValidator } = require("../../Validator/productValidators")
 const { AllOrders , userOrderDetails,OrderDetailss  , OrderDetails ,OrderStatusChanged , SearchOrders , OrderDateFilter} = require("../../Controllers/Admin/adminOrderController")
 const { createCoupenCode , getAllCoupenCode , deleteCoupenCode } = require("../../Controllers/Admin/adminCoupenController")
+const { getAllSubscribers, deleteSubscriber } = require('../../Controllers/User/subscribeController');
 const { createReferalCode , getAllReferalCode , getReferalDetails , deleteReferalCode } = require("../../Controllers/Admin/adminReferalCodeController")
 const verifyadmin =require('../../middleware/admin')
+
 const router = express.Router()
 
 // Admin auth api start here
@@ -108,6 +110,13 @@ router.post("/coupen/create" ,  newCoupenCodeValidator , validateToken ,verifyTo
 router.get("/coupen/get"  , getAllCoupenCode);
 router.delete("/coupen/delete/:id" , validateToken ,verifyToken , deleteCoupenCode);
 // CoupenCode api end here
+
+//For Subscriber Email 
+
+
+router.get('/subscribers',validateToken ,verifyToken , getAllSubscribers);
+router.delete('/subscribers/delete',validateToken ,verifyToken , deleteSubscriber);
+
 
 
 // ReferalCode api start here
