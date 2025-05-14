@@ -106,6 +106,35 @@ exports.editProfile = async (req, res) => {
     }
 };
 
+// Change Admin Password
+exports.changePassword = async (req, res) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
+
+        if (!oldPassword || !newPassword) {
+            return res.status(400).json(ApiResponse({}, "Old and new passwords are required", false));
+        }
+
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json(ApiResponse({}, "User not found", false));
+        }
+
+        // Check if old password is correct
+        if (!user.authenticate(oldPassword)) {
+            return res.status(401).json(ApiResponse({}, "Old password is incorrect", false));
+        }
+
+        user.password = newPassword;
+        await user.save();
+
+        return res.status(200).json(ApiResponse({}, "Password changed successfully", true));
+    } catch (error) {
+        return res.status(500).json(ApiResponse({}, error.message, false));
+    }
+};
+
+
 // Send Email Verification Code
 exports.emailVerificationCode = async (req, res) => {
     try {

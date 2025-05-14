@@ -1,7 +1,7 @@
 const express = require("express");
 const { adminRegisterValidator, signinValidator, emailCodeValidator, verifyCodeValidator, resetPasswordValidator  } = require("../../Validator/authValidator");
 const { newCoupenCodeValidator } = require("../../Validator/coupenValidator");
-const { register, emailVerificationCode, verifyRecoverCode,editProfile,getAdminProfile, resetPassword, signin } = require("../../Controllers/Admin/adminAuthController");
+const { register, emailVerificationCode, verifyRecoverCode,editProfile,getAdminProfile, resetPassword, signin, changePassword } = require("../../Controllers/Admin/adminAuthController");
 const { user , contentimage ,catImage } = require('../../Helpers/images')
 const {verifyToken ,validateToken} = require('../../Helpers/index')
 const {UserStatus , GetAllUsers , GetOneUser ,UserDateFilter , getUserSearchFilter} = require('../../Controllers/Admin/adminUserController')
@@ -26,7 +26,8 @@ router.post("/signin", signinValidator, signin);
 // adminRoutes.js (or wherever your routes are defined)
 router.get("/profile", validateToken, verifyToken, getAdminProfile);
 
-router.post("/updateAdmin/:id", validateToken, verifyToken, editProfile);
+router.put("/updateAdmin/:id", validateToken, verifyToken, editProfile);
+router.put("/change-password", validateToken, verifyToken, changePassword );
 
 router.post("/emailVerificationCode", emailCodeValidator, emailVerificationCode);
 router.post("/verifyRecoverCode", verifyCodeValidator, verifyRecoverCode);
