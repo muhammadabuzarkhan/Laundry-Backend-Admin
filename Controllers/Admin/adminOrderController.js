@@ -2,197 +2,341 @@ const Order = require('../../Models/Order');
 const { ApiResponse} = require("../../Helpers");
 const mongoose = require('mongoose')
 
-exports.AllOrders = async (req,res) => {
-try{
-  const data =    [
-    {
-      '$unwind': '$services'
-    }, {
-      '$lookup': {
-        'from': 'categories', 
-        'localField': 'services.categoryId', 
-        'foreignField': '_id', 
-        'as': 'services.categoryId'
-      }
-    }, {
-      '$unwind': {
-        'path': '$services.categoryId', 
-        'preserveNullAndEmptyArrays': true
-      }
-    }, {
-      '$unwind': '$services.products'
-    }, {
-      '$lookup': {
-        'from': 'products', 
-        'localField': 'services.products.productId', 
-        'foreignField': '_id', 
-        'as': 'services.products.productId'
-      }
-    }, {
-      '$unwind': {
-        'path': '$services.products.productId', 
-        'preserveNullAndEmptyArrays': true
-      }
-    }, {
-      '$group': {
-        '_id': {
-          'orderId': '$_id', 
-          'categoryId': '$services.categoryId'
-        }, 
-        'products': {
-          '$push': {
-            'productId': '$services.products.productId', 
-            'quantity': '$services.products.quantity'
+// exports.AllOrders = async (req,res) => {
+// try{
+//   const data =    [
+//     {
+//       '$unwind': '$services'
+//     }, {
+//       '$lookup': {
+//         'from': 'categories', 
+//         'localField': 'services.categoryId', 
+//         'foreignField': '_id', 
+//         'as': 'services.categoryId'
+//       }
+//     }, {
+//       '$unwind': {
+//         'path': '$services.categoryId', 
+//         'preserveNullAndEmptyArrays': true
+//       }
+//     }, {
+//       '$unwind': '$services.products'
+//     }, {
+//       '$lookup': {
+//         'from': 'products', 
+//         'localField': 'services.products.productId', 
+//         'foreignField': '_id', 
+//         'as': 'services.products.productId'
+//       }
+//     }, {
+//       '$unwind': {
+//         'path': '$services.products.productId', 
+//         'preserveNullAndEmptyArrays': true
+//       }
+//     }, {
+//       '$group': {
+//         '_id': {
+//           'orderId': '$_id', 
+//           'categoryId': '$services.categoryId'
+//         }, 
+//         'products': {
+//           '$push': {
+//             'productId': '$services.products.productId', 
+//             'quantity': '$services.products.quantity'
+//           }
+//         }, 
+//         'userid': {
+//           '$first': '$userid'
+//         }, 
+//         'collectionTime': {
+//           '$first': '$collectionTime'
+//         }, 
+//         'DeliveryTime': {
+//           '$first': '$DeliveryTime'
+//         }, 
+//         'description': {
+//           '$first': '$description'
+//         }, 
+//         'paymentId': {
+//           '$first': '$paymentId'
+//         }, 
+//         'grossTotal': {
+//           '$first': '$grossTotal'
+//         }, 
+//         'serviceFee': {
+//           '$first': '$serviceFee'
+//         }, 
+//         'deliveryFee': {
+//           '$first': '$deliveryFee'
+//         }, 
+//         'driverTip': {
+//           '$first': '$driverTip'
+//         }, 
+//         'Total': {
+//           '$first': '$Total'
+//         }, 
+//         'createdAt': {
+//           '$first': '$createdAt'
+//         }, 
+//         'updatedAt': {
+//           '$first': '$updatedAt'
+//         }, 
+//         '__v': {
+//           '$first': '$__v'
+//         },
+//         status: {
+//          $first: "$status"
+//        }
+//       }
+//     }, {
+//       '$group': {
+//         '_id': '$_id.orderId', 
+//         'services': {
+//           '$push': {
+//             'categoryId': '$_id.categoryId', 
+//             'categoryDetails': '$categoryDetails', 
+//             'products': '$products'
+//           }
+//         }, 
+//         'userid': {
+//           '$first': '$userid'
+//         }, 
+//         'collectionTime': {
+//           '$first': '$collectionTime'
+//         }, 
+//         'DeliveryTime': {
+//           '$first': '$DeliveryTime'
+//         }, 
+//         'description': {
+//           '$first': '$description'
+//         }, 
+//         'paymentId': {
+//           '$first': '$paymentId'
+//         }, 
+//         'grossTotal': {
+//           '$first': '$grossTotal'
+//         }, 
+//         'serviceFee': {
+//           '$first': '$serviceFee'
+//         }, 
+//         'deliveryFee': {
+//           '$first': '$deliveryFee'
+//         }, 
+//         'driverTip': {
+//           '$first': '$driverTip'
+//         }, 
+//         'Total': {
+//           '$first': '$Total'
+//         }, 
+//         'createdAt': {
+//           '$first': '$createdAt'
+//         }, 
+//         'updatedAt': {
+//           '$first': '$updatedAt'
+//         }, 
+//         '__v': {
+//           '$first': '$__v'
+//         },
+//         status: {
+//          $first: "$status"
+//        }
+//       }
+//     }, {
+//       '$lookup': {
+//         'from': 'users', 
+//         'localField': 'userid', 
+//         'foreignField': '_id', 
+//         'as': 'userid'
+//       }
+//     }, {
+//       '$unwind': {
+//         'path': '$userid', 
+//         'preserveNullAndEmptyArrays': true
+//       }
+//     }, {
+//       '$project': {
+//         'services': 1, 
+//         'collectionTime': 1, 
+//         'DeliveryTime': 1, 
+//         'description': 1, 
+//         'paymentId': 1, 
+//         'grossTotal': 1, 
+//         'serviceFee': 1, 
+//         'deliveryFee': 1, 
+//         'driverTip': 1, 
+//         'Total': 1, 
+//         'createdAt': 1, 
+//         'updatedAt': 1, 
+//         'status' : 1,
+//         'userid': {
+//           '_id': '$userid._id', 
+//           'firstName': '$userid.firstName', 
+//           'lastName': '$userid.lastName', 
+//           'phoneNumber': '$userid.phoneNumber'
+//         }
+//       }
+//     }
+//   ]
+//     const allOrder = await Order.aggregate(data)
+
+//     return res
+//             .status(200)
+//             .json(
+//                 ApiResponse(
+//                     { allOrder },
+//                     true,
+//                     "Orders Fetched Successfully",
+//                     allOrder.length
+//                 )
+//             );
+// }catch(error){
+//     return res.status(500).json(ApiResponse({}, error.message, false));
+// }
+// }
+
+exports.AllOrders = async (req, res) => {
+  try {
+    const data = [
+      { '$unwind': '$services' },
+      {
+        '$lookup': {
+          'from': 'categories',
+          'localField': 'services.categoryId',
+          'foreignField': '_id',
+          'as': 'services.categoryId'
+        }
+      },
+      {
+        '$unwind': {
+          'path': '$services.categoryId',
+          'preserveNullAndEmptyArrays': true
+        }
+      },
+      { '$unwind': '$services.products' },
+      {
+        '$lookup': {
+          'from': 'products',
+          'localField': 'services.products.productId',
+          'foreignField': '_id',
+          'as': 'services.products.productId'
+        }
+      },
+      {
+        '$unwind': {
+          'path': '$services.products.productId',
+          'preserveNullAndEmptyArrays': true
+        }
+      },
+      {
+        '$group': {
+          '_id': {
+            'orderId': '$_id',
+            'categoryId': '$services.categoryId'
+          },
+          'products': {
+            '$push': {
+              'productId': '$services.products.productId',
+              'quantity': '$services.products.quantity'
+            }
+          },
+          'userid': { '$first': '$userid' },
+          'collectionTime': { '$first': '$collectionTime' },
+          'DeliveryTime': { '$first': '$DeliveryTime' },
+          'description': { '$first': '$description' },
+          'paymentId': { '$first': '$paymentId' },
+          'grossTotal': { '$first': '$grossTotal' },
+          'serviceFee': { '$first': '$serviceFee' },
+          'deliveryFee': { '$first': '$deliveryFee' },
+          'driverTip': { '$first': '$driverTip' },
+          'Total': { '$first': '$Total' },
+          'createdAt': { '$first': '$createdAt' },
+          'updatedAt': { '$first': '$updatedAt' },
+          '__v': { '$first': '$__v' },
+          'status': { '$first': '$status' },
+          'orderNumber': { '$first': '$orderNumber' } // Added here
+        }
+      },
+      {
+        '$group': {
+          '_id': '$_id.orderId',
+          'services': {
+            '$push': {
+              'categoryId': '$_id.categoryId',
+              'categoryDetails': '$categoryDetails',
+              'products': '$products'
+            }
+          },
+          'userid': { '$first': '$userid' },
+          'collectionTime': { '$first': '$collectionTime' },
+          'DeliveryTime': { '$first': '$DeliveryTime' },
+          'description': { '$first': '$description' },
+          'paymentId': { '$first': '$paymentId' },
+          'grossTotal': { '$first': '$grossTotal' },
+          'serviceFee': { '$first': '$serviceFee' },
+          'deliveryFee': { '$first': '$deliveryFee' },
+          'driverTip': { '$first': '$driverTip' },
+          'Total': { '$first': '$Total' },
+          'createdAt': { '$first': '$createdAt' },
+          'updatedAt': { '$first': '$updatedAt' },
+          '__v': { '$first': '$__v' },
+          'status': { '$first': '$status' },
+          'orderNumber': { '$first': '$orderNumber' } // Added here as well
+        }
+      },
+      {
+        '$lookup': {
+          'from': 'users',
+          'localField': 'userid',
+          'foreignField': '_id',
+          'as': 'userid'
+        }
+      },
+      {
+        '$unwind': {
+          'path': '$userid',
+          'preserveNullAndEmptyArrays': true
+        }
+      },
+      {
+        '$project': {
+          'services': 1,
+          'collectionTime': 1,
+          'DeliveryTime': 1,
+          'description': 1,
+          'paymentId': 1,
+          'grossTotal': 1,
+          'serviceFee': 1,
+          'deliveryFee': 1,
+          'driverTip': 1,
+          'Total': 1,
+          'createdAt': 1,
+          'updatedAt': 1,
+          'status': 1,
+          'orderNumber': 1, // Added here for output
+          'userid': {
+            '_id': '$userid._id',
+            'firstName': '$userid.firstName',
+            'lastName': '$userid.lastName',
+            'phoneNumber': '$userid.phoneNumber'
           }
-        }, 
-        'userid': {
-          '$first': '$userid'
-        }, 
-        'collectionTime': {
-          '$first': '$collectionTime'
-        }, 
-        'DeliveryTime': {
-          '$first': '$DeliveryTime'
-        }, 
-        'description': {
-          '$first': '$description'
-        }, 
-        'paymentId': {
-          '$first': '$paymentId'
-        }, 
-        'grossTotal': {
-          '$first': '$grossTotal'
-        }, 
-        'serviceFee': {
-          '$first': '$serviceFee'
-        }, 
-        'deliveryFee': {
-          '$first': '$deliveryFee'
-        }, 
-        'driverTip': {
-          '$first': '$driverTip'
-        }, 
-        'Total': {
-          '$first': '$Total'
-        }, 
-        'createdAt': {
-          '$first': '$createdAt'
-        }, 
-        'updatedAt': {
-          '$first': '$updatedAt'
-        }, 
-        '__v': {
-          '$first': '$__v'
-        },
-        status: {
-         $first: "$status"
-       }
-      }
-    }, {
-      '$group': {
-        '_id': '$_id.orderId', 
-        'services': {
-          '$push': {
-            'categoryId': '$_id.categoryId', 
-            'categoryDetails': '$categoryDetails', 
-            'products': '$products'
-          }
-        }, 
-        'userid': {
-          '$first': '$userid'
-        }, 
-        'collectionTime': {
-          '$first': '$collectionTime'
-        }, 
-        'DeliveryTime': {
-          '$first': '$DeliveryTime'
-        }, 
-        'description': {
-          '$first': '$description'
-        }, 
-        'paymentId': {
-          '$first': '$paymentId'
-        }, 
-        'grossTotal': {
-          '$first': '$grossTotal'
-        }, 
-        'serviceFee': {
-          '$first': '$serviceFee'
-        }, 
-        'deliveryFee': {
-          '$first': '$deliveryFee'
-        }, 
-        'driverTip': {
-          '$first': '$driverTip'
-        }, 
-        'Total': {
-          '$first': '$Total'
-        }, 
-        'createdAt': {
-          '$first': '$createdAt'
-        }, 
-        'updatedAt': {
-          '$first': '$updatedAt'
-        }, 
-        '__v': {
-          '$first': '$__v'
-        },
-        status: {
-         $first: "$status"
-       }
-      }
-    }, {
-      '$lookup': {
-        'from': 'users', 
-        'localField': 'userid', 
-        'foreignField': '_id', 
-        'as': 'userid'
-      }
-    }, {
-      '$unwind': {
-        'path': '$userid', 
-        'preserveNullAndEmptyArrays': true
-      }
-    }, {
-      '$project': {
-        'services': 1, 
-        'collectionTime': 1, 
-        'DeliveryTime': 1, 
-        'description': 1, 
-        'paymentId': 1, 
-        'grossTotal': 1, 
-        'serviceFee': 1, 
-        'deliveryFee': 1, 
-        'driverTip': 1, 
-        'Total': 1, 
-        'createdAt': 1, 
-        'updatedAt': 1, 
-        'status' : 1,
-        'userid': {
-          '_id': '$userid._id', 
-          'firstName': '$userid.firstName', 
-          'lastName': '$userid.lastName', 
-          'phoneNumber': '$userid.phoneNumber'
         }
       }
-    }
-  ]
-    const allOrder = await Order.aggregate(data)
+    ];
 
-    return res
-            .status(200)
-            .json(
-                ApiResponse(
-                    { allOrder },
-                    true,
-                    "Orders Fetched Successfully",
-                    allOrder.length
-                )
-            );
-}catch(error){
+    const allOrder = await Order.aggregate(data);
+
+    return res.status(200).json(
+      ApiResponse(
+        { allOrder },
+        true,
+        "Orders Fetched Successfully",
+        allOrder.length
+      )
+    );
+  } catch (error) {
     return res.status(500).json(ApiResponse({}, error.message, false));
-}
-}
+  }
+};
 
 exports.OrderDetails = async (req,res) => {
   const { id } = req.params
@@ -413,6 +557,42 @@ try{
     return res.status(500).json(ApiResponse({}, error.message, false));
 }
 }
+
+
+
+exports.getOrderStatusCounts = async (req, res) => {
+    try {
+        const statusCounts = await Order.aggregate([
+            {
+                $group: {
+                    _id: "$status",
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+
+        // Convert the aggregation result to a cleaner format
+        const formattedCounts = {
+            pending: 0,
+            completed: 0
+        };
+
+        statusCounts.forEach(item => {
+            if (item._id === "pending") formattedCounts.pending = item.count;
+            if (item._id === "completed") formattedCounts.completed = item.count;
+        });
+
+        return res.status(200).json(
+            ApiResponse(
+                formattedCounts,
+                "Order status counts fetched successfully",
+                true
+            )
+        );
+    } catch (error) {
+        return res.status(500).json(ApiResponse({}, error.message, false));
+    }
+};
 
 exports.SearchOrders = async (req,res) => {
   const { text } = req.params

@@ -6,7 +6,7 @@ const productSchema = new Schema(
     
     subCatId : {
         type : mongoose.Schema.Types.ObjectId,
-        // default : "subcategory",
+        default : "subcategory",
         required : true
     },
     title : {

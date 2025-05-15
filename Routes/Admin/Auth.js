@@ -12,7 +12,7 @@ const { DateFilter , TextSearchFilter , FilterCategoryStatus,editCategory , edit
 const { editSubCategory , getSubCategoryById , DateFilters , TextSearchFilters , subCategorystatusChanged , createSubCategory , getSubcategorybyCategory ,getallSubCategory ,FiltersubCategoryStatus} = require("../../Controllers/Admin/adminSubCategoryController")
 const { editProduct ,  createProduct ,getProductsBysubCategoryId , ProductStatusChanged , getAllProducts , ProductSearchFilters , DateFiltersforProduct  , getProductById } = require("../../Controllers/Admin/adminProductController")
 const { newProductValidator } = require("../../Validator/productValidators")
-const { AllOrders , userOrderDetails,OrderDetailss  , OrderDetails ,OrderStatusChanged , SearchOrders , OrderDateFilter} = require("../../Controllers/Admin/adminOrderController")
+const { AllOrders , userOrderDetails,OrderDetailss  , OrderDetails ,OrderStatusChanged , SearchOrders , OrderDateFilter, getOrderStatusCounts} = require("../../Controllers/Admin/adminOrderController")
 const { createCoupenCode , getAllCoupenCode , deleteCoupenCode } = require("../../Controllers/Admin/adminCoupenController")
 const { getAllSubscribers, deleteSubscriber } = require('../../Controllers/User/subscribeController');
 const { createReferalCode , getAllReferalCode , getReferalDetails , deleteReferalCode } = require("../../Controllers/Admin/adminReferalCodeController")
@@ -103,7 +103,9 @@ router.get("/order/get/:id" , validateToken ,verifyToken  , OrderDetails )
 router.get("/order/search/:text" , validateToken ,verifyToken  , SearchOrders )
 router.put("/order/status/:id" , validateToken ,verifyToken  , OrderStatusChanged )
 router.get("/order/datefilter" , validateToken ,verifyToken  , OrderDateFilter )
+router.get("/order/getstatus",validateToken,verifyToken, getOrderStatusCounts)
 // order api end here
+
 
 
 // CoupenCode api start here

@@ -411,33 +411,60 @@ try{
 }
 }
 
-exports.editSubCategory = async (req,res) => {
-  const { id } = req.params
-  const { catId , title } = req.body
-try{
+// exports.editSubCategory = async (req,res) => {
+//   const { id } = req.params
+//   const { catId , title } = req.body
+// try{
 
-  const dataObject = {
-    catId : catId,
-    title : title
-  }
+//   const dataObject = {
+//     catId : catId,
+//     title : title
+//   }
 
-  const updatedPro = await subCategory.updateOne({_id : id },{ $set: dataObject },{new : true})
+//   const updatedPro = await subCategory.updateOne({_id : id },{ $set: dataObject },{new : true})
 
-  const {  acknowledged , modifiedCount} = updatedPro
+//   const {  acknowledged , modifiedCount} = updatedPro
 
-  if(acknowledged === true && modifiedCount === 1){
+//   if(acknowledged === true && modifiedCount === 1){
 
-        res.status(200).json(
-          ApiResponse(
-            {},
-            "subCategory updated Successfully",
-            true
+//         res.status(200).json(
+//           ApiResponse(
+//             {},
+//             "subCategory updated Successfully",
+//             true
             
-          )
-        );
+//           )
+//         );
 
-}
-}catch(error){
-  res.status(500).json(ApiResponse({}, error.message, false));
-}
-}
+// }
+// }catch(error){
+//   res.status(500).json(ApiResponse({}, error.message, false));
+// }
+// }
+
+exports.editSubCategory = async (req, res) => {
+  const { id } = req.params;
+  const { title } = req.body; // Only accepting title here
+
+  try {
+    const dataObject = { title }; // Only the title will be updated
+
+    const updatedPro = await subCategory.updateOne(
+      { _id: id },
+      { $set: dataObject },
+      { new: true }
+    );
+
+    const { acknowledged, modifiedCount } = updatedPro;
+
+    if (acknowledged === true && modifiedCount === 1) {
+      res.status(200).json(
+        ApiResponse({}, "subCategory updated successfully", true)
+      );
+    } else {
+      res.status(404).json(ApiResponse({}, "No such subCategory found", false));
+    }
+  } catch (error) {
+    res.status(500).json(ApiResponse({}, error.message, false));
+  }
+};
