@@ -10,6 +10,7 @@ const morgan = require("morgan");
 const swagger = require("./Swagger");
 const subscribeRoutes =require('./Routes/User/subscribeRoutes.js')
 const countRoutes =require('./Routes/Admin/CountRoutes.js')
+const callorder = require('./Routes/Admin/CallOrderRoutes.js')
 
 require("dotenv").config();
 const { NODE_ENV, PORT } = process.env
@@ -44,6 +45,7 @@ const limiter = rateLimit({
 
 app.use('/api', countRoutes);
 app.use('/api', subscribeRoutes);
+app.use('/api', callorder);
 app.use("/api", limiter);
 
 //static routes
