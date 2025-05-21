@@ -12,7 +12,14 @@ const callOrderSchema = new mongoose.Schema({
   description: { type: String },
   address: { type: String, required: true },
   title: { type: String, required: true },
-}, { timestamps: true });
+    status: { 
+    type: String, 
+    enum: ['pending', 'completed'], 
+    default: 'pending' 
+  }
+
+}, 
+{ timestamps: true });
 
 callOrderSchema.pre('save', async function (next) {
   if (!this.order_number) {
