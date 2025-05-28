@@ -11,6 +11,7 @@ const swagger = require("./Swagger");
 const subscribeRoutes =require('./Routes/User/subscribeRoutes.js')
 const countRoutes =require('./Routes/Admin/CountRoutes.js')
 const callorder = require('./Routes/Admin/CallOrderRoutes.js')
+const CustomCustomer = require('./Routes/Admin/CustomCustomerRoutes.js')
 
 require("dotenv").config();
 const { NODE_ENV, PORT } = process.env
@@ -47,6 +48,9 @@ app.use('/api', countRoutes);
 app.use('/api', subscribeRoutes);
 app.use('/api', callorder);
 app.use("/api", limiter);
+
+app.use("/api", CustomCustomer);
+
 
 //static routes
 app.use("/Uploads", express.static("./Uploads"));

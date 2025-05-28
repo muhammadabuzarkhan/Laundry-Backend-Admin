@@ -14,7 +14,7 @@ const { editProduct ,  createProduct ,getProductsBysubCategoryId , ProductStatus
 const { newProductValidator } = require("../../Validator/productValidators")
 const { AllOrders , userOrderDetails,OrderDetailss  , OrderDetails ,OrderStatusChanged , SearchOrders , OrderDateFilter, getOrderStatusCounts} = require("../../Controllers/Admin/adminOrderController")
 const { createCoupenCode , getAllCoupenCode , deleteCoupenCode } = require("../../Controllers/Admin/adminCoupenController")
-const { getAllSubscribers, deleteSubscriber } = require('../../Controllers/User/subscribeController');
+const { getAllSubscribers, deleteSubscriber,updateSubscriberStatus } = require('../../Controllers/User/subscribeController');
 const { createReferalCode , getAllReferalCode , getReferalDetails , deleteReferalCode } = require("../../Controllers/Admin/adminReferalCodeController")
 const verifyadmin =require('../../middleware/admin')
 
@@ -119,6 +119,7 @@ router.delete("/coupen/delete/:id" , validateToken ,verifyToken , deleteCoupenCo
 
 router.get('/subscribers',validateToken ,verifyToken , getAllSubscribers);
 router.delete('/subscribers/delete',validateToken ,verifyToken , deleteSubscriber);
+router.patch('/subscriber/status', validateToken, verifyToken, updateSubscriberStatus);
 
 
 
