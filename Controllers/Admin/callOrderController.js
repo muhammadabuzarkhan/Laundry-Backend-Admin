@@ -10,6 +10,16 @@ exports.createOrder = async (req, res) => {
   }
 };
 
+exports.getOrdersByCustomerId = async (req, res) => {
+  try {
+    const orders = await CallOrder.find({ customer: req.params.customerId });
+    res.json(orders);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
 exports.getAllOrders = async (req, res) => {
   try {
     const orders = await CallOrder.find();
@@ -96,6 +106,54 @@ exports.deleteOrder = async (req, res) => {
     const order = await CallOrder.findByIdAndDelete(req.params.id);
     if (!order) return res.status(404).json({ error: 'Order not found' });
     res.json({ message: 'Order deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+exports.updateOrderStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    const allowedStatuses = ['pending', 'processing', 'completed'];
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({ error: 'Invalid status value' });
+    }
+
+    const order = await CallOrder.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    res.json(order);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+
+exports.getCallOrderStatusCounts = async (req, res) => {
+  try {
+    const counts = await CallOrder.aggregate([
+      { $group: { _id: "$status", count: { $sum: 1 } } }
+    ]);
+
+    const result = { pending: 0, processing: 0, completed: 0 };
+
+    counts.forEach(item => {
+      const status = (item._id || 'pending').toLowerCase();
+      if (result.hasOwnProperty(status)) {
+        result[status] = item.count;
+      }
+    });
+
+    res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
