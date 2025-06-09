@@ -122,7 +122,12 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# Ignore zip files
 *.zip
-uploads
-Uploads
+
+# Certificate files
 certs
+
+# ✅ Do NOT ignore Uploads anymore
+# uploads
+# Uploads
