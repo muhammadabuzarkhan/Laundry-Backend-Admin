@@ -158,3 +158,27 @@ exports.getCallOrderStatusCounts = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+// Add to your CallOrder controller
+
+exports.createMultipleOrders = async (req, res) => {
+  try {
+    const { customer, orders } = req.body;
+
+    if (!customer || !Array.isArray(orders) || orders.length === 0) {
+      return res.status(400).json({ error: 'Invalid request body' });
+    }
+
+    const ordersToInsert = orders.map(order => ({
+      ...order,
+      customer
+    }));
+
+    const savedOrders = await mongoose.model('CallOrder').insertMany(ordersToInsert);
+
+    res.status(201).json(savedOrders);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

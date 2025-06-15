@@ -9,6 +9,8 @@ router.get('/callorder/status-counts', CallOrderController.getCallOrderStatusCou
 
 // Existing routes
 router.post('/callorder/create', CallOrderController.createOrder);
+router.post('/callorder/create-multiple', CallOrderController.createMultipleOrders);
+
 router.get('/callorder/getall', CallOrderController.getAllOrders);
 router.get('/callorder/:id', CallOrderController.getOrderById);
 router.put('/callorder/:id', CallOrderController.updateOrder);
